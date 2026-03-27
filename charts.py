@@ -37,7 +37,7 @@ def plot_feature_chart(file):
         scores   = [mfcc_score, pitch_score, flux, chroma, zcr]
         colors   = ['#7c3aed' if s > 50 else '#06b6d4' for s in scores]
 
-        fig, ax = plt.subplots(figsize=(8, 4))
+        fig, ax = plt.subplots(figsize=(10, 8))
         fig.patch.set_facecolor('#0f0f2e')
         ax.set_facecolor('#0f0f2e')
 
@@ -54,7 +54,7 @@ def plot_feature_chart(file):
 
         plt.tight_layout()
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=100, bbox_inches='tight', facecolor='#0f0f2e')
+        plt.savefig(buf, format='png', dpi=120, bbox_inches='tight', facecolor='#0f0f2e')
         plt.close()
         buf.seek(0)
         return np.array(Image.open(buf))

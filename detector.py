@@ -4,32 +4,18 @@ import numpy as np
 def extract_features(file):
     """
     Extract audio features matching the train_model.py exactly.
-    
-    CRITICAL: 
-    - Default sr for librosa is 22050 (this is what train_model.py uses)
-    - Res_type = 'kaiser_fast'
-    - Duration = 5.0
-    - NO trimming of silence (as training didn't use it)
     """
     try:
-        # Load exactly like train_model.py
-        # sr=None doesn't work well if we want consistency with model features, 
-        # so we use 22050 which is the librosa default.
         audio, sr = librosa.load(file, res_type='kaiser_fast', duration=5.0)
 
         if audio is None or len(audio) == 0:
             raise ValueError("Audio file is empty or corrupted")
 
-        # Basic padding if too short to avoid feature errors
         if len(audio) < 22050:
             audio = np.pad(audio, (0, 22050 - len(audio)))
         
-        # Max limit 5s (22050 * 5 = 110250)
         audio = audio[:22050 * 5]
 
-        # ──────────────────────────────────────────────────────────────
-        # FEATURE EXTRACTION — MATCHING train_model.py EXACTLY
-        # ──────────────────────────────────────────────────────────────
         mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
         mfcc_mean = np.mean(mfcc.T, axis=0)
         mfcc_std  = np.std(mfcc.T,  axis=0)
@@ -57,16 +43,49 @@ def extract_features(file):
         raise ValueError(f"Feature extraction failed: {str(e)}")
 
 
+def get_ai_reasoning(features):
+    """
+    Expert heuristic analysis of features to provide human-readable red flags.
+    Based on common deepfake artifacts.
+    """
+    reasons = []
+    
+    # 1. Pitch Stability (infer from MFCC std, features 40-79)
+    mfcc_std_mean = np.mean(features[40:80])
+    if mfcc_std_mean < 1.0:
+        reasons.append("[!] Unnatural voice stability detected (AI-like monotone)")
+    
+    # 2. Spectral Roll-off (High frequency cut-off)
+    # features[222] = spectral_rolloff
+    if features[222] < 3000:
+        reasons.append("[!] Lack of high-frequency natural breath noise")
+        
+    # 3. ZCR (Zero Crossing Rate)
+    # features[220] = zcr
+    if features[220] < 0.05:
+        reasons.append("[!] Sub-natural phoneme transitions detected")
+
+    if not reasons:
+        reasons.append("[OK] Voice displays natural organic variance and noise profile")
+        
+    return reasons
+
+
 def predict(file, model, scaler):
+    """
+    Predict probability and return AI reasoning.
+    """
     try:
         features = extract_features(file)
-        features = features.reshape(1, -1)
-        features = scaler.transform(features)
         
-        # Binary Classification:
-        # 0 = Real
-        # 1 = Fake (Synthetic)
-        prob_fake = model.predict_proba(features)[0][1]
-        return float(prob_fake)
+        # Get reasoning before scaling
+        reasoning = get_ai_reasoning(features)
+        
+        # Scale and predict
+        features_reshaped = features.reshape(1, -1)
+        features_scaled = scaler.transform(features_reshaped)
+        prob_fake = model.predict_proba(features_scaled)[0][1]
+        
+        return float(prob_fake), reasoning
     except Exception as e:
         raise ValueError(str(e))

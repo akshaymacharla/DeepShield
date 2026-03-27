@@ -18,7 +18,7 @@ def plot_spectrogram(audio_path):
         if y is None or len(y) == 0:
             raise ValueError("Unable to load audio file")
 
-        fig, axes = plt.subplots(2, 1, figsize=(11, 7))
+        fig, axes = plt.subplots(2, 1, figsize=(12, 10))
         fig.patch.set_facecolor('#0f0f2e')
         for ax in axes:
             ax.set_facecolor('#0f0f2e')
@@ -47,7 +47,7 @@ def plot_spectrogram(audio_path):
 
         plt.tight_layout()
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=100, bbox_inches='tight', facecolor='#0f0f2e')
+        plt.savefig(buf, format='png', dpi=120, bbox_inches='tight', facecolor='#0f0f2e')
         plt.close()
         buf.seek(0)
         return np.array(Image.open(buf))
