@@ -25,30 +25,37 @@ print("FAKE FILES:", len(fake_files))
 if len(real_files) == 0 or len(fake_files) == 0:
     raise ValueError("❌ No audio files found. Make sure dataset/real and dataset/fake have audio files.")
 
-# --- 3. Feature extraction function ---
+# --- 3. Improved Feature Extraction ---
 def extract_features(file):
-    audio, sr = librosa.load(file, res_type='kaiser_fast', duration=5.0)
+    try:
+        # Standardize sr=22050 matching detector.py
+        audio, sr = librosa.load(file, sr=22050, duration=5.0)
+        
+        target_len = 22050 * 5
+        if len(audio) < target_len:
+            audio = np.pad(audio, (0, target_len - len(audio)))
+        audio = audio[:target_len]
 
-    mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
-    mfcc_mean = np.mean(mfcc.T, axis=0)
-    mfcc_std = np.std(mfcc.T, axis=0)
+        mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
+        mfcc_mean = np.mean(mfcc.T, axis=0)
+        mfcc_std  = np.std(mfcc.T,  axis=0)
 
-    chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
-    chroma_mean = np.mean(chroma.T, axis=0)
+        chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
+        chroma_mean = np.mean(chroma.T, axis=0)
 
-    mel = librosa.feature.melspectrogram(y=audio, sr=sr)
-    mel_mean = np.mean(mel.T, axis=0)
+        mel = librosa.feature.melspectrogram(y=audio, sr=sr, n_mels=128)
+        mel_mean = np.mean(mel.T, axis=0)
 
-    zcr = np.mean(librosa.feature.zero_crossing_rate(y=audio))
-    spectral_centroid = np.mean(librosa.feature.spectral_centroid(y=audio, sr=sr))
-    spectral_rolloff = np.mean(librosa.feature.spectral_rolloff(y=audio, sr=sr))
+        zcr = np.mean(librosa.feature.zero_crossing_rate(y=audio))
+        spectral_centroid = np.mean(librosa.feature.spectral_centroid(y=audio, sr=sr))
+        spectral_rolloff  = np.mean(librosa.feature.spectral_rolloff(y=audio, sr=sr))
 
-    features = np.hstack((
-        mfcc_mean, mfcc_std,
-        chroma_mean, mel_mean,
-        [zcr, spectral_centroid, spectral_rolloff]
-    ))
-    return features
+        return np.hstack((
+            mfcc_mean, mfcc_std, chroma_mean, mel_mean,
+            [zcr, spectral_centroid, spectral_rolloff]
+        ))
+    except Exception as e:
+        raise ValueError(f"Feature extraction failed for {file}: {e}")
 
 # --- 4. Load dataset ---
 X, y = [], []
@@ -91,7 +98,7 @@ model = XGBClassifier(
 model.fit(X_train, y_train)
 
 acc = accuracy_score(y_test, model.predict(X_test))
-print(f"✅ Accuracy: {acc*100:.1f}%")
+print(f"Accuracy: {acc*100:.1f}%")
 
 # --- 7. Save model ---
 os.makedirs(os.path.join(base_dir, "models"), exist_ok=True)

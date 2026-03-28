@@ -6,15 +6,18 @@ def extract_features(file):
     Extract audio features matching the train_model.py exactly.
     """
     try:
-        audio, sr = librosa.load(file, res_type='kaiser_fast', duration=5.0)
+        # Standardize sr=22050 everywhere to match training
+        audio, sr = librosa.load(file, sr=22050, duration=5.0)
 
         if audio is None or len(audio) == 0:
             raise ValueError("Audio file is empty or corrupted")
 
-        if len(audio) < 22050:
-            audio = np.pad(audio, (0, 22050 - len(audio)))
+        # Ensure exact sample matching for XGBoost input (22050 * 5s)
+        target_len = 22050 * 5
+        if len(audio) < target_len:
+            audio = np.pad(audio, (0, target_len - len(audio)))
         
-        audio = audio[:22050 * 5]
+        audio = audio[:target_len]
 
         mfcc = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=40)
         mfcc_mean = np.mean(mfcc.T, axis=0)
@@ -52,13 +55,13 @@ def get_ai_reasoning(features):
     
     # 1. Pitch Stability (infer from MFCC std, features 40-79)
     mfcc_std_mean = np.mean(features[40:80])
-    if mfcc_std_mean < 1.0:
-        reasons.append("[!] Unnatural voice stability detected (AI-like monotone)")
+    if mfcc_std_mean < 0.7:  # Relaxed from 1.0 to reduce false positives on flat recordings
+        reasons.append("[!] High voice stability (Common AI monotone artifact)")
     
     # 2. Spectral Roll-off (High frequency cut-off)
     # features[222] = spectral_rolloff
-    if features[222] < 3000:
-        reasons.append("[!] Lack of high-frequency natural breath noise")
+    if features[222] < 2000:  # Relaxed from 3000 for desktop microphones
+        reasons.append("[!] Compressed frequency response detected")
         
     # 3. ZCR (Zero Crossing Rate)
     # features[220] = zcr

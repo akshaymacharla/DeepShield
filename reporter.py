@@ -59,7 +59,7 @@ def generate_pdf_report(filename, prob_fake, risk_level, duration, avg_pitch, re
             pdf.multi_cell(180, 8, f"- {reason}", 0, 'L')
         
         pdf.output(output_path)
-        return output_path
+        return output_path if os.path.exists(output_path) else None
     except Exception as e:
         print(f"Error generating PDF: {e}")
         return None

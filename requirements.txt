@@ -8,3 +8,5 @@ soundfile
 joblib
 pillow
 scipy
+fpdf2
+soxr
