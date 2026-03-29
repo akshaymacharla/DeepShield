@@ -1,0 +1,3 @@
+accuracy: 86.7%
+real: 33
+fake: 41
