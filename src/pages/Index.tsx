@@ -1,8 +1,5 @@
-import { Shield, Upload, Activity, AlertTriangle, CheckCircle, Mic, FileAudio, Zap, Brain, Waves, ChevronRight, BarChart3, Lock, Eye } from "lucide-react";
+import { Brain, Waves, Activity, Lock, BarChart3, Eye } from "lucide-react";
 import { useState, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import WaveformVisualizer from "@/components/WaveformVisualizer";
-import AnalysisResult from "@/components/AnalysisResult";
 import FeatureCard from "@/components/FeatureCard";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -13,6 +10,9 @@ import Footer from "@/components/Footer";
 import ApiSection from "@/components/ApiSection";
 import SettingsSection from "@/components/SettingsSection";
 import ScrollToTop from "@/components/ScrollToTop";
+import DashboardTab from "@/components/DashboardTab";
+import BatchUploadTab from "@/components/BatchUploadTab";
+import type { ScanRecord } from "@/components/DashboardTab";
 
 export type AnalysisState = "idle" | "uploading" | "analyzing" | "complete";
 export type VerdictType = "genuine" | "deepfake" | null;
@@ -22,6 +22,8 @@ const Index = () => {
   const [verdict, setVerdict] = useState<VerdictType>(null);
   const [confidence, setConfidence] = useState(0);
   const [fileName, setFileName] = useState("");
+  // Global scan history for Dashboard leaderboard
+  const [scanHistory, setScanHistory] = useState<ScanRecord[]>([]);
 
   const handleFileUpload = useCallback((file: File) => {
     setFileName(file.name);
@@ -30,12 +32,23 @@ const Index = () => {
 
     setTimeout(() => {
       setAnalysisState("analyzing");
-
       setTimeout(() => {
         const isDeepfake = Math.random() > 0.5;
-        setVerdict(isDeepfake ? "deepfake" : "genuine");
-        setConfidence(Math.floor(Math.random() * 15) + 85);
+        const conf = Math.floor(Math.random() * 15) + 85;
+        const v: VerdictType = isDeepfake ? "deepfake" : "genuine";
+        setVerdict(v);
+        setConfidence(conf);
         setAnalysisState("complete");
+
+        // Record to scan history
+        const record: ScanRecord = {
+          id: Math.random().toString(36).slice(2),
+          fileName: file.name,
+          verdict: v,
+          confidence: conf,
+          time: new Date().toLocaleTimeString(),
+        };
+        setScanHistory((prev) => [record, ...prev]);
       }, 2500);
     }, 1000);
   }, []);
@@ -61,6 +74,8 @@ const Index = () => {
         onReset={handleReset}
       />
       <HowItWorks />
+
+      {/* Features Section */}
       <section id="features" className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
@@ -106,8 +121,16 @@ const Index = () => {
           </div>
         </div>
       </section>
+
       <SettingsSection />
       <ApiSection />
+
+      {/* NEW: Batch Upload Tab */}
+      <BatchUploadTab />
+
+      {/* NEW: Dashboard Tab */}
+      <DashboardTab scans={scanHistory} />
+
       <Footer />
       <ScrollToTop />
     </div>

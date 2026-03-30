@@ -11,20 +11,33 @@ const Navbar = () => {
           </span>
         </div>
         <div className="hidden md:flex items-center gap-8">
-          <a href="#analyze" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#analyze" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-105 inline-block">
             Analyze
           </a>
-          <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-105 inline-block">
             How It Works
           </a>
-          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-105 inline-block">
             Features
           </a>
-          <a href="#api" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#api" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-105 inline-block">
             API
           </a>
-          <a href="#settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 hover:scale-105 inline-block">
             Settings
+          </a>
+          {/* New tabs */}
+          <a
+            href="#batch"
+            className="text-sm font-semibold text-primary/80 hover:text-primary transition-all duration-200 hover:scale-105 inline-block px-3 py-1 rounded-full border border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+          >
+            Batch
+          </a>
+          <a
+            href="#dashboard"
+            className="text-sm font-semibold text-primary/80 hover:text-primary transition-all duration-200 hover:scale-105 inline-block px-3 py-1 rounded-full border border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+          >
+            Dashboard
           </a>
         </div>
         <div className="flex items-center gap-3">
