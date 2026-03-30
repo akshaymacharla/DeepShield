@@ -68,9 +68,12 @@ const UploadSection = ({ analysisState, verdict, confidence, fileName, onFileUpl
                 <FileAudio className="w-4 h-4" />
                 Upload File
               </Button>
-              <Button variant="heroOutline" size="lg">
+              <Button variant="heroOutline" size="lg" className="relative">
                 <Mic className="w-4 h-4" />
                 Record Live
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-mono uppercase tracking-wider text-primary">
+                  Coming Soon
+                </span>
               </Button>
             </div>
           </div>
