@@ -1,4 +1,0 @@
-accuracy: 99.3%
-samples: 666
-real: 297
-fake: 369
