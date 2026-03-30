@@ -9,7 +9,7 @@ const Navbar = () => {
             <Shield className="w-5 h-5 text-primary" />
           </div>
           <span className="font-semibold text-lg text-foreground tracking-tight">
-            Vox<span className="text-primary">Guard</span>
+            Deep<span className="text-primary">Shield</span>
           </span>
         </div>
         <div className="hidden md:flex items-center gap-8">
