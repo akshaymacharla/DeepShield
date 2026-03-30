@@ -10,6 +10,8 @@ import UploadSection from "@/components/UploadSection";
 import HowItWorks from "@/components/HowItWorks";
 import StatsSection from "@/components/StatsSection";
 import Footer from "@/components/Footer";
+import ApiSection from "@/components/ApiSection";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export type AnalysisState = "idle" | "uploading" | "analyzing" | "complete";
 export type VerdictType = "genuine" | "deepfake" | null;
