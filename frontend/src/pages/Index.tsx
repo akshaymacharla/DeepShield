@@ -33,8 +33,20 @@ const Index = () => {
     setTimeout(() => {
       setAnalysisState("analyzing");
       setTimeout(() => {
-        const isDeepfake = Math.random() > 0.5;
-        const conf = Math.floor(Math.random() * 15) + 85;
+        // Deterministic analysis based on file name
+        const lowerName = file.name.toLowerCase();
+        const isSuspicious = lowerName.includes('fake') || lowerName.includes('synth') || lowerName.includes('ai') || lowerName.includes('bot') || lowerName.includes('gpt');
+        
+        let hash = 0;
+        for (let i = 0; i < file.name.length; i++) {
+          hash = (hash << 5) - hash + file.name.charCodeAt(i);
+          hash |= 0;
+        }
+        
+        // Use a cheat code or 50% split. Even hash = deepfake, odd = genuine.
+        const isDeepfake = isSuspicious || Math.abs(hash) % 2 === 0;
+        const conf = 88 + (Math.abs(hash) % 11); // 88 to 98%
+        
         const v: VerdictType = isDeepfake ? "deepfake" : "genuine";
         setVerdict(v);
         setConfidence(conf);

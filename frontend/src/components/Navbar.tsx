@@ -28,7 +28,7 @@ const Navbar = () => {
           </a>
           {/* New tabs */}
           <a
-            href="#batch"
+            href="#batch-upload"
             className="text-sm font-semibold text-primary/80 hover:text-primary transition-all duration-200 hover:scale-105 inline-block px-3 py-1 rounded-full border border-primary/20 hover:border-primary/50 hover:bg-primary/5"
           >
             Batch
