@@ -11,6 +11,7 @@ import HowItWorks from "@/components/HowItWorks";
 import StatsSection from "@/components/StatsSection";
 import Footer from "@/components/Footer";
 import ApiSection from "@/components/ApiSection";
+import SettingsSection from "@/components/SettingsSection";
 import ScrollToTop from "@/components/ScrollToTop";
 
 export type AnalysisState = "idle" | "uploading" | "analyzing" | "complete";
@@ -105,6 +106,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <SettingsSection />
       <ApiSection />
       <Footer />
       <ScrollToTop />

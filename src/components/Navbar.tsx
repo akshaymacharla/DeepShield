@@ -20,6 +20,9 @@ const Navbar = () => {
           <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
+          <a href="#settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            Settings
+          </a>
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20 text-success text-xs font-medium">
