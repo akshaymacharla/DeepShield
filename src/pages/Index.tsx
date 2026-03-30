@@ -105,7 +105,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <ApiSection />
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };
