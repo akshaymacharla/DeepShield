@@ -20,6 +20,9 @@ const Navbar = () => {
           <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Features
           </a>
+          <a href="#api" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            API
+          </a>
           <a href="#settings" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Settings
           </a>
