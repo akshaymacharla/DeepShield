@@ -56,4 +56,4 @@ def plot_spectrogram(audio_path):
         plt.close('all')
         blank = np.zeros((600, 800, 3), dtype=np.uint8)
         blank[:, :] = [15, 15, 46]
-        return blank
+        return blank# updated

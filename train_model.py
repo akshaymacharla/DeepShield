@@ -228,4 +228,4 @@ with open(os.path.join(base_dir, "models", "meta.txt"), "w") as f:
 
 print("\n✅ Model, scaler, and meta saved successfully!")
 print(f"   Real variants: {sum(y==0)}  |  Fake variants: {sum(y==1)}")
-print("\n💡 TIP: For best results, add 20+ real and 20+ fake audio files to your dataset folders.")
+print("\n💡 TIP: For best results, add 20+ real and 20+ fake audio files to your dataset folders.")# updated
