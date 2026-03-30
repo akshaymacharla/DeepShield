@@ -63,18 +63,18 @@ const UploadSection = ({ analysisState, verdict, confidence, fileName, onFileUpl
             <p className="text-sm text-muted-foreground mb-6">
               Supports WAV, MP3, M4A, FLAC, OGG — Max 50MB
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button variant="hero" size="lg">
                 <FileAudio className="w-4 h-4" />
                 Upload File
               </Button>
-              <Button variant="heroOutline" size="lg" className="relative">
-                <Mic className="w-4 h-4" />
-                Record Live
-                <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-mono uppercase tracking-wider text-primary">
+              <div className="relative flex items-center gap-3 px-5 py-3 rounded-xl border border-dashed border-accent/30 bg-accent/5">
+                <Mic className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium text-accent">Record Live</span>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-accent/15 border border-accent/25 text-accent">
                   Coming Soon
                 </span>
-              </Button>
+              </div>
             </div>
           </div>
         ) : (

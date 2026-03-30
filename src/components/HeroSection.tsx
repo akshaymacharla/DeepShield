@@ -14,7 +14,7 @@ const HeroSection = () => {
       />
       {/* Radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full opacity-20"
-        style={{ background: 'radial-gradient(ellipse, hsl(174 62% 47% / 0.15) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(ellipse, hsl(192 85% 50% / 0.12) 0%, hsl(265 70% 60% / 0.05) 40%, transparent 70%)' }}
       />
 
       <div className="max-w-6xl mx-auto relative z-10">
