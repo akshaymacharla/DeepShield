@@ -48,33 +48,39 @@ const BatchUploadTab = () => {
 
       // Update to analyzing
       setFiles((prev) => prev.map((f, idx) => (idx === i ? { ...f, status: "analyzing" } : f)));
-      await new Promise((r) => setTimeout(r, 1500));
-
-      // Update to complete
-      const lowerName = files[i].file.name.toLowerCase();
-      const isSuspicious = lowerName.includes('fake') || lowerName.includes('synth') || lowerName.includes('ai') || lowerName.includes('bot') || lowerName.includes('gpt');
       
-      let hash = 0;
-      for (let j = 0; j < files[i].file.name.length; j++) {
-        hash = (hash << 5) - hash + files[i].file.name.charCodeAt(j);
-        hash |= 0;
+      try {
+        const formData = new FormData();
+        formData.append("audio", files[i].file);
+        const res = await fetch("http://localhost:8000/v1/analyze", {
+          method: "POST",
+          body: formData,
+        });
+        
+        if (!res.ok) throw new Error("API request failed");
+        
+        const data = await res.json();
+        
+        setFiles((prev) =>
+          prev.map((f, idx) =>
+            idx === i
+              ? {
+                  ...f,
+                  status: "complete",
+                  verdict: data.verdict,
+                  confidence: data.confidence,
+                }
+              : f
+          )
+        );
+      } catch (err) {
+        console.error(err);
+        setFiles((prev) =>
+          prev.map((f, idx) =>
+            idx === i ? { ...f, status: "error" } : f
+          )
+        );
       }
-      
-      const isDeepfake = isSuspicious || Math.abs(hash) % 2 === 0;
-      const confidence = 88 + (Math.abs(hash) % 11);
-
-      setFiles((prev) =>
-        prev.map((f, idx) =>
-          idx === i
-            ? {
-                ...f,
-                status: "complete",
-                verdict: isDeepfake ? "deepfake" : "genuine",
-                confidence,
-              }
-            : f
-        )
-      );
     }
     setIsProcessing(false);
   };

@@ -30,29 +30,26 @@ const Index = () => {
     setAnalysisState("uploading");
     setVerdict(null);
 
+    // Simulate short UI transition delay
     setTimeout(() => {
       setAnalysisState("analyzing");
-      setTimeout(() => {
-        // Deterministic analysis based on file name
-        const lowerName = file.name.toLowerCase();
-        const isSuspicious = lowerName.includes('fake') || lowerName.includes('synth') || lowerName.includes('ai') || lowerName.includes('bot') || lowerName.includes('gpt');
-        
-        let hash = 0;
-        for (let i = 0; i < file.name.length; i++) {
-          hash = (hash << 5) - hash + file.name.charCodeAt(i);
-          hash |= 0;
-        }
-        
-        // Use a cheat code or 50% split. Even hash = deepfake, odd = genuine.
-        const isDeepfake = isSuspicious || Math.abs(hash) % 2 === 0;
-        const conf = 88 + (Math.abs(hash) % 11); // 88 to 98%
-        
-        const v: VerdictType = isDeepfake ? "deepfake" : "genuine";
+    }, 500);
+
+    const formData = new FormData();
+    formData.append("audio", file);
+
+    fetch("http://localhost:8000/v1/analyze", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const v: VerdictType = data.verdict as VerdictType;
+        const conf = data.confidence;
         setVerdict(v);
         setConfidence(conf);
         setAnalysisState("complete");
 
-        // Record to scan history
         const record: ScanRecord = {
           id: Math.random().toString(36).slice(2),
           fileName: file.name,
@@ -61,8 +58,11 @@ const Index = () => {
           time: new Date().toLocaleTimeString(),
         };
         setScanHistory((prev) => [record, ...prev]);
-      }, 2500);
-    }, 1000);
+      })
+      .catch((err) => {
+        console.error("Analysis failed:", err);
+        setAnalysisState("idle");
+      });
   }, []);
 
   const handleReset = useCallback(() => {
