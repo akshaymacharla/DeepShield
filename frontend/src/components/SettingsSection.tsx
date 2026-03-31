@@ -1,10 +1,16 @@
-import { useState } from "react";
-import { Settings, Bell, Shield, Volume2, Sliders, Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings, Bell, Shield, Volume2, Sliders, Moon, Sun, Cpu } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+
+interface ModelInfo {
+  id: string;
+  name: string;
+  active: boolean;
+}
 
 const SettingsSection = () => {
   const { toast } = useToast();
@@ -14,6 +20,14 @@ const SettingsSection = () => {
   const [sensitivity, setSensitivity] = useState([0.5]);
   const [audioPreprocess, setAudioPreprocess] = useState(true);
   const [realTimeAlerts, setRealTimeAlerts] = useState(false);
+  const [models, setModels] = useState<ModelInfo[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/v1/models")
+      .then(res => res.json())
+      .then(data => setModels(data))
+      .catch(err => console.error("Failed to fetch models:", err));
+  }, []);
 
   const handleSave = () => {
     toast({
@@ -82,6 +96,32 @@ const SettingsSection = () => {
                 </div>
                 <Switch checked={audioPreprocess} onCheckedChange={setAudioPreprocess} />
               </div>
+            </div>
+          </div>
+
+          {/* Active Models */}
+          <div className="glass-card rounded-xl p-6 border">
+            <div className="flex items-center gap-3 mb-6">
+              <Cpu className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Active Detection Models</h3>
+            </div>
+            <div className="space-y-4">
+              {models.length > 0 ? (
+                models.map(model => (
+                  <div key={model.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border border-secondary">
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{model.name}</p>
+                      <p className="text-[10px] font-mono text-muted-foreground">{model.id}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                       <span className="flex h-2 w-2 rounded-full bg-success"></span>
+                       <span className="text-[10px] font-bold text-success uppercase tracking-wider">Active</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Fetching models from neural engine...</p>
+              )}
             </div>
           </div>
 

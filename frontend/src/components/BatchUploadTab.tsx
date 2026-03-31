@@ -10,7 +10,11 @@ interface BatchFile {
   confidence?: number;
 }
 
-const BatchUploadTab = () => {
+interface BatchUploadTabProps {
+  onScansComplete?: (scans: any[]) => void;
+}
+
+const BatchUploadTab = ({ onScansComplete }: BatchUploadTabProps) => {
   const [files, setFiles] = useState<BatchFile[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +77,16 @@ const BatchUploadTab = () => {
               : f
           )
         );
+
+        if (onScansComplete) {
+          onScansComplete([{
+            id: files[i].id,
+            fileName: files[i].file.name,
+            verdict: data.verdict,
+            confidence: data.confidence,
+            time: new Date().toLocaleTimeString()
+          }]);
+        }
       } catch (err) {
         console.error(err);
         setFiles((prev) =>

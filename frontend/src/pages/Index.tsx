@@ -25,6 +25,10 @@ const Index = () => {
   // Global scan history for Dashboard leaderboard
   const [scanHistory, setScanHistory] = useState<ScanRecord[]>([]);
 
+  const addScanRecords = useCallback((records: ScanRecord[]) => {
+    setScanHistory((prev) => [...records, ...prev]);
+  }, []);
+
   const handleFileUpload = useCallback((file: File) => {
     setFileName(file.name);
     setAnalysisState("uploading");
@@ -57,7 +61,7 @@ const Index = () => {
           confidence: conf,
           time: new Date().toLocaleTimeString(),
         };
-        setScanHistory((prev) => [record, ...prev]);
+        addScanRecords([record]);
       })
       .catch((err) => {
         console.error("Analysis failed:", err);
@@ -138,7 +142,7 @@ const Index = () => {
       <ApiSection />
 
       {/* NEW: Batch Upload Tab */}
-      <BatchUploadTab />
+      <BatchUploadTab onScansComplete={addScanRecords} />
 
       {/* NEW: Dashboard Tab */}
       <DashboardTab scans={scanHistory} />
