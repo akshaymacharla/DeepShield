@@ -30,7 +30,7 @@ The frontend provides an intuitive "clinical obsidian and cyan" interface for re
    \`\`\`bash
    npm run dev
    \`\`\`
-*(The application will be accessible at \`http://localhost:8080/\`)*
+*(The application will be accessible at (https://deepshield-4tkp.onrender.com/)
 
 ---
 
