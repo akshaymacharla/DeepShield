@@ -15,6 +15,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def root():
+    return {"status": "DeepShield is running"}
+
 @app.post("/v1/analyze")
 async def analyze_endpoint(audio: UploadFile = File(...)):
     # Read bytes 
