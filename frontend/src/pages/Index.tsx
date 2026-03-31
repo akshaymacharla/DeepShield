@@ -42,7 +42,7 @@ const Index = () => {
     const formData = new FormData();
     formData.append("audio", file);
 
-    fetch("http://localhost:8000/v1/analyze", {
+    fetch("/v1/analyze", {
       method: "POST",
       body: formData,
     })

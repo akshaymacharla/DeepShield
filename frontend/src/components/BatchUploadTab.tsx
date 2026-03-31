@@ -56,7 +56,7 @@ const BatchUploadTab = ({ onScansComplete }: BatchUploadTabProps) => {
       try {
         const formData = new FormData();
         formData.append("audio", files[i].file);
-        const res = await fetch("http://localhost:8000/v1/analyze", {
+        const res = await fetch("/v1/analyze", {
           method: "POST",
           body: formData,
         });

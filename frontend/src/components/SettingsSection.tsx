@@ -23,7 +23,7 @@ const SettingsSection = () => {
   const [models, setModels] = useState<ModelInfo[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/v1/models")
+    fetch("/v1/models")
       .then(res => res.json())
       .then(data => setModels(data))
       .catch(err => console.error("Failed to fetch models:", err));
